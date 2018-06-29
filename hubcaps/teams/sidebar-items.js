@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Permission","Team repository permissions"]],"struct":[["OrgTeams","reference to teams associated with a github org"],["RepoTeams","reference to teams associated with a github repo"],["Team",""]]});

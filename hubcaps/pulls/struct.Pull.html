@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `Pull` struct in crate `hubcaps`."><meta name="keywords" content="rust, rustlang, rust-lang, Pull"><title>hubcaps::pulls::Pull - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc struct"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Struct Pull</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.id">id</a><a href="#structfield.url">url</a><a href="#structfield.html_url">html_url</a><a href="#structfield.diff_url">diff_url</a><a href="#structfield.patch_url">patch_url</a><a href="#structfield.issue_url">issue_url</a><a href="#structfield.commits_url">commits_url</a><a href="#structfield.review_comments_url">review_comments_url</a><a href="#structfield.review_comment_url">review_comment_url</a><a href="#structfield.comments_url">comments_url</a><a href="#structfield.statuses_url">statuses_url</a><a href="#structfield.number">number</a><a href="#structfield.state">state</a><a href="#structfield.title">title</a><a href="#structfield.body">body</a><a href="#structfield.created_at">created_at</a><a href="#structfield.updated_at">updated_at</a><a href="#structfield.closed_at">closed_at</a><a href="#structfield.merged_at">merged_at</a><a href="#structfield.head">head</a><a href="#structfield.base">base</a><a href="#structfield.user">user</a><a href="#structfield.assignee">assignee</a><a href="#structfield.assignees">assignees</a><a href="#structfield.merge_commit_sha">merge_commit_sha</a><a href="#structfield.mergeable">mergeable</a><a href="#structfield.merged_by">merged_by</a><a href="#structfield.comments">comments</a><a href="#structfield.commits">commits</a><a href="#structfield.additions">additions</a><a href="#structfield.deletions">deletions</a><a href="#structfield.changed_files">changed_files</a><a href="#structfield.labels">labels</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a></div><a class="sidebar-title" href="#synthetic-implementations">Auto Trait Implementations</a><div class="sidebar-links"><a href="#impl-Send">Send</a><a href="#impl-Sync">Sync</a></div></div><p class='location'><a href='../index.html'>hubcaps</a>::<wbr><a href='index.html'>pulls</a></p><script>window.sidebarCurrent = {name: 'Pull', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>hubcaps</a>::<wbr><a href='index.html'>pulls</a>::<wbr><a class="struct" href=''>Pull</a></span><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../../src/hubcaps/pulls/mod.rs.html#232-267' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust struct'>pub struct Pull {
+    pub id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
+    pub url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub html_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub diff_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub patch_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub issue_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub commits_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub review_comments_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub review_comment_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub comments_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub statuses_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub number: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
+    pub state: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub title: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub body: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;,
+    pub created_at: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub updated_at: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    pub closed_at: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;,
+    pub merged_at: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;,
+    pub head: <a class="struct" href="../../hubcaps/pulls/struct.Commit.html" title="struct hubcaps::pulls::Commit">Commit</a>,
+    pub base: <a class="struct" href="../../hubcaps/pulls/struct.Commit.html" title="struct hubcaps::pulls::Commit">Commit</a>,
+    pub user: <a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>,
+    pub assignee: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>&gt;,
+    pub assignees: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>&gt;,
+    pub merge_commit_sha: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;,
+    pub mergeable: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;,
+    pub merged_by: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>&gt;,
+    pub comments: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
+    pub commits: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
+    pub additions: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
+    pub deletions: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
+    pub changed_files: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
+    pub labels: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../../hubcaps/labels/struct.Label.html" title="struct hubcaps::labels::Label">Label</a>&gt;,
+}</pre></div><div class='docblock'><p>representation of a github pull request</p>
+</div><h2 id='fields' class='fields small-section-header'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.id" class="structfield small-section-header">
+                           <a href="#structfield.id" class="anchor field"></a>
+                           <span id="id.v" class='invisible'>
+                           <code>id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code>
+                           </span></span><span id="structfield.url" class="structfield small-section-header">
+                           <a href="#structfield.url" class="anchor field"></a>
+                           <span id="url.v" class='invisible'>
+                           <code>url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.html_url" class="structfield small-section-header">
+                           <a href="#structfield.html_url" class="anchor field"></a>
+                           <span id="html_url.v" class='invisible'>
+                           <code>html_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.diff_url" class="structfield small-section-header">
+                           <a href="#structfield.diff_url" class="anchor field"></a>
+                           <span id="diff_url.v" class='invisible'>
+                           <code>diff_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.patch_url" class="structfield small-section-header">
+                           <a href="#structfield.patch_url" class="anchor field"></a>
+                           <span id="patch_url.v" class='invisible'>
+                           <code>patch_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.issue_url" class="structfield small-section-header">
+                           <a href="#structfield.issue_url" class="anchor field"></a>
+                           <span id="issue_url.v" class='invisible'>
+                           <code>issue_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.commits_url" class="structfield small-section-header">
+                           <a href="#structfield.commits_url" class="anchor field"></a>
+                           <span id="commits_url.v" class='invisible'>
+                           <code>commits_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.review_comments_url" class="structfield small-section-header">
+                           <a href="#structfield.review_comments_url" class="anchor field"></a>
+                           <span id="review_comments_url.v" class='invisible'>
+                           <code>review_comments_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.review_comment_url" class="structfield small-section-header">
+                           <a href="#structfield.review_comment_url" class="anchor field"></a>
+                           <span id="review_comment_url.v" class='invisible'>
+                           <code>review_comment_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.comments_url" class="structfield small-section-header">
+                           <a href="#structfield.comments_url" class="anchor field"></a>
+                           <span id="comments_url.v" class='invisible'>
+                           <code>comments_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.statuses_url" class="structfield small-section-header">
+                           <a href="#structfield.statuses_url" class="anchor field"></a>
+                           <span id="statuses_url.v" class='invisible'>
+                           <code>statuses_url: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.number" class="structfield small-section-header">
+                           <a href="#structfield.number" class="anchor field"></a>
+                           <span id="number.v" class='invisible'>
+                           <code>number: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code>
+                           </span></span><span id="structfield.state" class="structfield small-section-header">
+                           <a href="#structfield.state" class="anchor field"></a>
+                           <span id="state.v" class='invisible'>
+                           <code>state: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.title" class="structfield small-section-header">
+                           <a href="#structfield.title" class="anchor field"></a>
+                           <span id="title.v" class='invisible'>
+                           <code>title: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.body" class="structfield small-section-header">
+                           <a href="#structfield.body" class="anchor field"></a>
+                           <span id="body.v" class='invisible'>
+                           <code>body: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</code>
+                           </span></span><span id="structfield.created_at" class="structfield small-section-header">
+                           <a href="#structfield.created_at" class="anchor field"></a>
+                           <span id="created_at.v" class='invisible'>
+                           <code>created_at: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.updated_at" class="structfield small-section-header">
+                           <a href="#structfield.updated_at" class="anchor field"></a>
+                           <span id="updated_at.v" class='invisible'>
+                           <code>updated_at: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a></code>
+                           </span></span><span id="structfield.closed_at" class="structfield small-section-header">
+                           <a href="#structfield.closed_at" class="anchor field"></a>
+                           <span id="closed_at.v" class='invisible'>
+                           <code>closed_at: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</code>
+                           </span></span><span id="structfield.merged_at" class="structfield small-section-header">
+                           <a href="#structfield.merged_at" class="anchor field"></a>
+                           <span id="merged_at.v" class='invisible'>
+                           <code>merged_at: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</code>
+                           </span></span><span id="structfield.head" class="structfield small-section-header">
+                           <a href="#structfield.head" class="anchor field"></a>
+                           <span id="head.v" class='invisible'>
+                           <code>head: <a class="struct" href="../../hubcaps/pulls/struct.Commit.html" title="struct hubcaps::pulls::Commit">Commit</a></code>
+                           </span></span><span id="structfield.base" class="structfield small-section-header">
+                           <a href="#structfield.base" class="anchor field"></a>
+                           <span id="base.v" class='invisible'>
+                           <code>base: <a class="struct" href="../../hubcaps/pulls/struct.Commit.html" title="struct hubcaps::pulls::Commit">Commit</a></code>
+                           </span></span><span id="structfield.user" class="structfield small-section-header">
+                           <a href="#structfield.user" class="anchor field"></a>
+                           <span id="user.v" class='invisible'>
+                           <code>user: <a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a></code>
+                           </span></span><span id="structfield.assignee" class="structfield small-section-header">
+                           <a href="#structfield.assignee" class="anchor field"></a>
+                           <span id="assignee.v" class='invisible'>
+                           <code>assignee: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>&gt;</code>
+                           </span></span><span id="structfield.assignees" class="structfield small-section-header">
+                           <a href="#structfield.assignees" class="anchor field"></a>
+                           <span id="assignees.v" class='invisible'>
+                           <code>assignees: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>&gt;</code>
+                           </span></span><span id="structfield.merge_commit_sha" class="structfield small-section-header">
+                           <a href="#structfield.merge_commit_sha" class="anchor field"></a>
+                           <span id="merge_commit_sha.v" class='invisible'>
+                           <code>merge_commit_sha: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</code>
+                           </span></span><span id="structfield.mergeable" class="structfield small-section-header">
+                           <a href="#structfield.mergeable" class="anchor field"></a>
+                           <span id="mergeable.v" class='invisible'>
+                           <code>mergeable: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code>
+                           </span></span><span id="structfield.merged_by" class="structfield small-section-header">
+                           <a href="#structfield.merged_by" class="anchor field"></a>
+                           <span id="merged_by.v" class='invisible'>
+                           <code>merged_by: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../hubcaps/users/struct.User.html" title="struct hubcaps::users::User">User</a>&gt;</code>
+                           </span></span><span id="structfield.comments" class="structfield small-section-header">
+                           <a href="#structfield.comments" class="anchor field"></a>
+                           <span id="comments.v" class='invisible'>
+                           <code>comments: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code>
+                           </span></span><span id="structfield.commits" class="structfield small-section-header">
+                           <a href="#structfield.commits" class="anchor field"></a>
+                           <span id="commits.v" class='invisible'>
+                           <code>commits: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code>
+                           </span></span><span id="structfield.additions" class="structfield small-section-header">
+                           <a href="#structfield.additions" class="anchor field"></a>
+                           <span id="additions.v" class='invisible'>
+                           <code>additions: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code>
+                           </span></span><span id="structfield.deletions" class="structfield small-section-header">
+                           <a href="#structfield.deletions" class="anchor field"></a>
+                           <span id="deletions.v" class='invisible'>
+                           <code>deletions: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code>
+                           </span></span><span id="structfield.changed_files" class="structfield small-section-header">
+                           <a href="#structfield.changed_files" class="anchor field"></a>
+                           <span id="changed_files.v" class='invisible'>
+                           <code>changed_files: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code>
+                           </span></span><span id="structfield.labels" class="structfield small-section-header">
+                           <a href="#structfield.labels" class="anchor field"></a>
+                           <span id="labels.v" class='invisible'>
+                           <code>labels: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../../hubcaps/labels/struct.Label.html" title="struct hubcaps::labels::Label">Label</a>&gt;</code>
+                           </span></span>
+                <h2 id='implementations' class='small-section-header'>
+                  Trait Implementations<a href='#implementations' class='anchor'></a>
+                </h2>
+                <div id='implementations-list'><h3 id='impl-Debug' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../hubcaps/pulls/struct.Pull.html" title="struct hubcaps::pulls::Pull">Pull</a></code><a href='#impl-Debug' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/hubcaps/pulls/mod.rs.html#231' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/hubcaps/pulls/mod.rs.html#231' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
+</div></div></div>
+                <h2 id='synthetic-implementations' class='small-section-header'>
+                  Auto Trait Implementations<a href='#synthetic-implementations' class='anchor'></a>
+                </h2>
+                <div id='synthetic-implementations-list'>
+            <h3 id='impl-Send' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> for <a class="struct" href="../../hubcaps/pulls/struct.Pull.html" title="struct hubcaps::pulls::Pull">Pull</a></code><a href='#impl-Send' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div><h3 id='impl-Sync' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> for <a class="struct" href="../../hubcaps/pulls/struct.Pull.html" title="struct hubcaps::pulls::Pull">Pull</a></code><a href='#impl-Sync' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div></div></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "hubcaps";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

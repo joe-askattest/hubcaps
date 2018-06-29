@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ReviewComment",""],["ReviewComments","A structure for interfacing with a issue comments"]]});

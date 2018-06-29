@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Asset",""],["Assets",""],["Release",""],["ReleaseOptions",""],["ReleaseOptionsBuilder","builder interface for ReleaseOptions"],["ReleaseRef",""],["Releases",""]]});
