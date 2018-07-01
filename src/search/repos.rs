@@ -5,7 +5,7 @@ use std::fmt;
 use {Future, SortDirection, Stream};
 
 use super::{Search, SearchResult};
-use hyper::client::Connect;
+use hyper::client::connect::Connect;
 use users::User;
 
 #[derive(Debug, PartialEq)]

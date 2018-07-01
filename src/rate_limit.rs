@@ -1,6 +1,6 @@
 //! Rate Limit interface
 
-use hyper::client::Connect;
+use hyper::client::connect::Connect;
 
 use {Future, Github};
 

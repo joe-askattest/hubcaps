@@ -1,59 +1,47 @@
 //! Client errors
 
-use std::io::Error as IoError;
-use std::time::Duration;
-
-use hyper::Error as HttpError;
+use hyper;
 use hyper::StatusCode;
-use hyper::error::UriError;
-use serde_json::error::Error as SerdeError;
+use serde_json;
 
-error_chain! {
-    errors {
-        #[doc = "Client side error returned for faulty requests"]
-        Fault {
-            code: StatusCode,
-            error: ClientError,
-        } {
-            display("{}: '{}'", code, error.message)
-            description(error.message.as_str())
-          }
-        #[doc = "Error kind returned when a credential's rate limit has been exhausted. Wait for the reset duration before issuing more requests"]
-        RateLimit {
-            reset: Duration
-        } {
-            display("Rate limit exhausted. Will reset in {} seconds", reset.as_secs())
-        }
-    }
-    foreign_links {
-        Codec(SerdeError);
-        Http(HttpError);
-        IO(IoError);
-        URI(UriError);
-    }
-}
+use std::io;
 
-// representations
+mod client_error;
+mod field_error;
 
-#[derive(Debug, Deserialize, PartialEq)]
-pub struct FieldErr {
-    pub resource: String,
-    pub field: Option<String>,
-    pub code: String,
-    pub message: Option<String>,
-    pub documentation_url: Option<String>,
-}
+pub use self::client_error::ClientError;
+pub use self::field_error::FieldError;
 
-#[derive(Debug, Deserialize, PartialEq)]
-pub struct ClientError {
-    pub message: String,
-    pub errors: Option<Vec<FieldErr>>,
+#[derive(Debug, Fail)]
+pub enum Error {
+    // Client side error returned for faulty requests
+    #[fail(display="{}: '{}'", code, error)]
+    Fault {
+        code: StatusCode,
+        error: ClientError,
+    },
+
+    // Error returned when a credential's rate limit has been exhausted. Wait for the reset duration before issuing more requests
+    #[fail(display="Rate limit exhausted. Will reset in {} seconds", reset_seconds)]
+    RateLimit {
+        reset_seconds: u64,
+    },
+
+    #[fail(display="Deserialisation Error, {}", _0)]
+    Deserialisation(serde_json::error::Error),
+
+    #[fail(display="Http Error, {}", _0)]
+    Http(hyper::Error),
+
+    #[fail(display="IO Error, {}", _0)]
+    IO(io::Error),
 }
 
 #[cfg(test)]
 mod tests {
     use serde_json;
-    use super::{ClientError, FieldErr};
+    use super::{ClientError,  FieldError};
+
     #[test]
     fn deserialize_client_field_errors() {
         for (json, expect) in vec![
@@ -68,7 +56,7 @@ mod tests {
                 ClientError {
                     message: "Validation Failed".to_owned(),
                     errors: Some(vec![
-                        FieldErr {
+                        FieldError {
                             resource: "Release".to_owned(),
                             code: "custom".to_owned(),
                             field: None,

@@ -69,10 +69,11 @@
 //!
 #![allow(missing_docs)] // todo: make this a deny eventually
 
+#![feature(non_modrs_mods)]
+
 #[macro_use]
-extern crate error_chain;
+extern crate failure;
 extern crate futures;
-#[macro_use]
 extern crate hyper;
 #[cfg(feature = "tls")]
 extern crate hyper_tls;
@@ -82,25 +83,20 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-extern crate tokio_core;
+extern crate tokio;
 extern crate url;
 
 use std::fmt;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH};
 
-use futures::{future, stream, Future as StdFuture, IntoFuture, Stream as StdStream};
-use hyper::client::{Connect, HttpConnector, Request};
-use hyper::header::{qitem, Accept, Authorization, Link, Location, RelationType, UserAgent};
-use hyper::mime::Mime;
+use futures::{future, stream, IntoFuture, Stream as StdStream};
 use hyper::{Client, Method, StatusCode};
 #[cfg(feature = "tls")]
 use hyper_tls::HttpsConnector;
 use serde::de::DeserializeOwned;
-use tokio_core::reactor::Handle;
+use tokio::reactor::Handle;
 use url::Url;
 
-#[macro_use]
-mod macros; // expose json! macro to child modules
 pub mod activity;
 pub mod branches;
 pub mod comments;
@@ -125,7 +121,7 @@ pub mod statuses;
 pub mod teams;
 pub mod users;
 
-pub use errors::{Error, ErrorKind, Result};
+pub use errors::Error;
 
 use activity::Activity;
 use gists::{Gists, UserGists};
@@ -138,59 +134,21 @@ use users::Users;
 const DEFAULT_HOST: &str = "https://api.github.com";
 
 /// A type alias for `Futures` that may return `hubcaps::Errors`
-pub type Future<T> = Box<StdFuture<Item = T, Error = Error>>;
+pub struct Future<T>;
+impl<T> futures::Future for Future<T> {
+    type Item = T;
+    type Error = errors::Error;
+}
 
 /// A type alias for `Streams` that may result in `hubcaps::Errors`
 pub type Stream<T> = Box<StdStream<Item = T, Error = Error>>;
 
-header! {
-    #[doc(hidden)]
-    (XGithubRequestId, "X-GitHub-Request-Id") => [String]
-}
+const HEADER_X_GITHUB_REQUEST_ID:&'static str = "X-GitHub-Request-Id";
+const HEADER_X_RATELIMIT_LIMIT:&'static str = "X-RateLimit-Limit";
+const HEADER_X_RATELIMIT_REMAINING:&'static str = "X-RateLimit-Remaining";
+const HEADER_X_RATELIMIT_RESET:&'static str = "X-RateLimit-Reset";
 
-header! {
-  #[doc(hidden)]
-  (XRateLimitLimit, "X-RateLimit-Limit") => [u16]
-}
-
-header! {
-  #[doc(hidden)]
-  (XRateLimitRemaining, "X-RateLimit-Remaining") => [u32]
-}
-
-header! {
-  #[doc(hidden)]
-  (XRateLimitReset, "X-RateLimit-Reset") => [u32]
-}
-
-/// Github defined Media types
-/// See [this doc](https://developer.github.com/v3/media/) for more for more information
-#[derive(Clone, Copy)]
-pub enum MediaType {
-    /// Return json (the default)
-    Json,
-    /// Return json in preview form
-    Preview(&'static str),
-}
-
-impl Default for MediaType {
-    fn default() -> MediaType {
-        MediaType::Json
-    }
-}
-
-impl From<MediaType> for Mime {
-    fn from(media: MediaType) -> Mime {
-        match media {
-            MediaType::Json => "application/vnd.github.v3+json".parse().unwrap(),
-            MediaType::Preview(codename) => {
-                format!("application/vnd.github.{}-preview+json", codename)
-                    .parse()
-                    .expect(format!("could not parse media type for preview {}", codename).as_str())
-            }
-        }
-    }
-}
+const CONTENT_TYPE_APPLICATION_JSON:&'static str = "application/json";
 
 /// enum representation of Github list sorting options
 #[derive(Clone, Debug, PartialEq)]
@@ -231,7 +189,7 @@ pub enum Credentials {
 #[derive(Clone, Debug)]
 pub struct Github<C>
 where
-    C: Clone + Connect,
+    C: Clone + hyper::client::connect::Connect,
 {
     host: String,
     agent: String,
@@ -240,7 +198,7 @@ where
 }
 
 #[cfg(feature = "tls")]
-impl Github<HttpsConnector<HttpConnector>> {
+impl Github<HttpsConnector<hyper::client::connect::HttpConnector>> {
     pub fn new<A, C>(agent: A, credentials: C, handle: &Handle) -> Self
     where
         A: Into<String>,
@@ -266,7 +224,7 @@ impl Github<HttpsConnector<HttpConnector>> {
 
 impl<C> Github<C>
 where
-    C: Clone + Connect,
+    C: Clone + hyper::client::connect::Connect,
 {
     pub fn custom<H, A, CR>(host: H, agent: A, credentials: CR, http: Client<C>) -> Self
     where
@@ -371,15 +329,15 @@ where
         OrganizationRepositories::new(self.clone(), org)
     }
 
-    fn request<Out>(
+    fn request<Out, M>(
         &self,
         method: Method,
         uri: String,
-        body: Option<Vec<u8>>,
-        media_type: MediaType,
+        optional_body: Option<&M>,
     ) -> Future<(Option<Link>, Out)>
     where
-        Out: DeserializeOwned + 'static,
+        Out: DeserializeOwned,
+        M: serde::ser::Serialize + Sized,
     {
         let url = if let Some(Credentials::Client(ref id, ref secret)) = self.credentials {
             let mut parsed = Url::parse(&uri).unwrap();
@@ -391,54 +349,57 @@ where
         } else {
             uri.parse().into_future()
         };
+
         let instance = self.clone();
-        let body2 = body.clone();
-        let method2 = method.clone();
         let response = url.map_err(Error::from).and_then(move |url| {
-            let mut req = Request::new(method2, url);
+            let mut req = Request::new(method, url);
             {
                 let headers = req.headers_mut();
-                headers.set(UserAgent::new(instance.agent.clone()));
-                headers.set(Accept(vec![qitem(From::from(media_type))]));
+                headers.set(hyper::header::USER_AGENT, instance.agent.clone());
+                headers.set(hyper::header::CONTENT_TYPE, CONTENT_TYPE_APPLICATION_JSON);
                 if let Some(Credentials::Token(ref token)) = instance.credentials {
                     headers.set(Authorization(format!("token {}", token)))
                 }
             }
 
-            if let Some(body) = body2 {
-                req.set_body(body)
+            if let Some(body) = optional_body {
+                let body_str = to_json_str(body)?;
+                req.set_body(body_str)
             }
             instance.client.request(req).map_err(Error::from)
         });
-        let instance2 = self.clone();
+
         Box::new(response.and_then(move |response| {
-            for value in response.headers().get::<XGithubRequestId>() {
-                debug!("x-github-request-id: {}", value)
+            let headers = response.headers();
+
+            for value in headers.get_all(&HEADER_X_GITHUB_REQUEST_ID) {
+                debug!("x-github-request-id: {}", value);
             }
-            for value in response.headers().get::<XRateLimitLimit>() {
-                debug!("x-rate-limit-limit: {}", value.0)
+            for value in headers.get_all(&HEADER_X_RATELIMIT_LIMIT) {
+                debug!("x-rate-limit-limit: {}", value.0);
             }
-            let remaining = response
-                .headers()
-                .get::<XRateLimitRemaining>()
-                .map(|val| val.0);
-            let reset = response.headers().get::<XRateLimitReset>().map(|val| val.0);
+
+            let remaining = headers.get(HEADER_X_RATELIMIT_REMAINING).map(|val| val.0);
+            let reset = response.headers().get_all(&HEADER_X_RATELIMIT_RESET).map(|val| val.0);
+
             for value in remaining {
                 debug!("x-rate-limit-remaining: {}", value)
             }
             for value in reset {
                 debug!("x-rate-limit-reset: {}", value)
             }
+
             let status = response.status();
             // handle redirect common with renamed repos
             if StatusCode::MovedPermanently == status || StatusCode::TemporaryRedirect == status {
                 if let Some(location) = response.headers().get::<Location>() {
                     debug!("redirect location {:?}", location);
-                    return instance2.request(method, location.to_string(), body, media_type);
+                    return self.request(method, location.to_string(), optional_body);
                 }
             }
+
             let link = response.headers().get::<Link>().map(|l| l.clone());
-            Box::new(response.body().concat2().map_err(Error::from).and_then(
+            response.body().concat2().map_err(Error::from).and_then(
                 move |response_body| {
                     if status.is_success() {
                         debug!(
@@ -447,7 +408,7 @@ where
                         );
                         serde_json::from_slice::<Out>(&response_body)
                             .map(|out| (link, out))
-                            .map_err(|error| ErrorKind::Codec(error).into())
+                            .map_err(|err| Error::Deserialisation(err))
                     } else {
                         let error = match (remaining, reset) {
                             (Some(remaining), Some(reset)) if remaining == 0 => {
@@ -455,11 +416,12 @@ where
                                     .duration_since(UNIX_EPOCH)
                                     .unwrap()
                                     .as_secs();
-                                ErrorKind::RateLimit {
-                                    reset: Duration::from_secs(reset as u64 - now),
+
+                                Error::RateLimit {
+                                    reset_seconds: (reset as u64 - now),
                                 }
-                            }
-                            _ => ErrorKind::Fault {
+                            },
+                            _ => Error::Fault {
                                 code: status,
                                 error: serde_json::from_slice(&response_body)?,
                             },
@@ -467,95 +429,91 @@ where
                         Err(error.into())
                     }
                 },
-            ))
+            )
         }))
     }
 
-    fn request_entity<D>(
+    fn request_entity<D, M>(
         &self,
         method: Method,
         uri: String,
-        body: Option<Vec<u8>>,
-        media_type: MediaType,
+        body: Option<&M>,
     ) -> Future<D>
     where
         D: DeserializeOwned + 'static,
+        M: serde::ser::Serialize + Sized,
     {
-        Box::new(
-            self.request(method, uri, body, media_type)
-                .map(|(_, entity)| entity),
-        )
+        self.request(method, uri, body)
+            .map(|(_, entity)| entity)
     }
 
     fn get<D>(&self, uri: &str) -> Future<D>
     where
         D: DeserializeOwned + 'static,
     {
-        self.get_media(uri, MediaType::Json)
-    }
-
-    fn get_media<D>(&self, uri: &str, media: MediaType) -> Future<D>
-    where
-        D: DeserializeOwned + 'static,
-    {
-        self.request_entity(Method::Get, self.host.clone() + uri, None, media)
+        self.request_entity(Method::Get, self.host.clone() + uri, None)
     }
 
     fn get_pages<D>(&self, uri: &str) -> Future<(Option<Link>, D)>
     where
         D: DeserializeOwned + 'static,
     {
-        self.request(Method::Get, self.host.clone() + uri, None, MediaType::Json)
+        self.request(Method::Get, self.host.clone() + uri, None)
     }
 
     fn delete(&self, uri: &str) -> Future<()> {
-        Box::new(self.request_entity::<()>(
+        self.request_entity::<(), Option<()>>(
             Method::Delete,
             self.host.clone() + uri,
             None,
-            MediaType::Json,
-        ).or_else(|err| match err {
-            Error(ErrorKind::Codec(_), _) => Ok(()),
+        ).or_else(|err| match err.kind() {
+            Error::Deserialisation(_) => Ok(()),
             otherwise => Err(otherwise.into()),
-        }))
+        })
     }
 
-    fn post<D>(&self, uri: &str, message: Vec<u8>) -> Future<D>
+    fn post<D, M>(&self, uri: &str, message: Option<&M>) -> Future<D>
     where
         D: DeserializeOwned + 'static,
+        M: serde::ser::Serialize + Sized,
     {
         self.request_entity(
             Method::Post,
             self.host.clone() + uri,
             Some(message),
-            MediaType::Json,
         )
     }
 
-    fn patch_media<D>(&self, uri: &str, message: Vec<u8>, media: MediaType) -> Future<D>
+    fn patch_media<D, M>(&self, uri: &str, message: Option<&M>) -> Future<D>
     where
         D: DeserializeOwned + 'static,
+        M: serde::ser::Serialize + Sized,
     {
-        self.request_entity(Method::Patch, self.host.clone() + uri, Some(message), media)
+        self.request_entity(Method::Patch, self.host.clone() + uri, Some(message))
     }
 
-    fn patch<D>(&self, uri: &str, message: Vec<u8>) -> Future<D>
+    fn patch<D, M>(&self, uri: &str, message: Option<&M>) -> Future<D>
     where
         D: DeserializeOwned + 'static,
+        M: serde::ser::Serialize + Sized,
     {
         self.patch_media(uri, message, MediaType::Json)
     }
 
-    fn put_no_response(&self, uri: &str, message: Vec<u8>) -> Future<()> {
-        Box::new(self.put(uri, message).or_else(|err| match err {
-            Error(ErrorKind::Codec(_), _) => Ok(()),
+    fn put_no_response<M>(&self, uri: &str, message: Option<&M>) -> Future<()>
+    where
+        M: serde::ser::Serialize + Sized,
+    {
+        self.put(uri, message).or_else(|err| match err.kind() {
+            Error::Deserialisation(_) => Ok(()),
             err => Err(err.into()),
-        }))
+        })
     }
 
-    fn put<D>(&self, uri: &str, message: Vec<u8>) -> Future<D>
+    fn put<D, M>(&self, uri: &str, message: Option<&M>) -> Future<D>
     where
         D: DeserializeOwned + 'static,
+        M: serde::ser::Serialize + Sized,
     {
         self.request_entity(
             Method::Put,
@@ -584,30 +542,33 @@ where
     I: 'static,
     C: Clone + Connect,
 {
-    Box::new(
-        first
-            .map(move |(link, payload)| {
-                let mut items = into_items(payload);
-                items.reverse();
-                stream::unfold::<_, _, Future<(I, (Option<Link>, Vec<I>))>, _>(
-                    (link, items),
-                    move |(link, mut items)| match items.pop() {
-                        Some(item) => Some(Box::new(future::ok((item, (link, items))))),
-                        _ => link.and_then(next_link).map(|url| {
-                            let url = Url::parse(&url).unwrap();
-                            let uri = [url.path(), url.query().unwrap_or_default()].join("?");
-                            Box::new(github.get_pages(uri.as_ref()).map(move |(link, payload)| {
-                                let mut items = into_items(payload);
-                                items.reverse();
-                                (items.remove(0), (link, items))
-                            })) as Future<(I, (Option<Link>, Vec<I>))>
-                        }),
-                    },
-                )
-            })
-            .into_stream()
-            .flatten(),
-    )
+    first
+        .map(move |(link, payload)| {
+            let mut items = into_items(payload);
+            items.reverse();
+            stream::unfold::<_, _, Future<(I, (Option<Link>, Vec<I>))>, _>(
+                (link, items),
+                move |(link, mut items)| match items.pop() {
+                    Some(item) => Some(Box::new(future::ok((item, (link, items))))),
+                    _ => link.and_then(next_link).map(|url| {
+                        let url = Url::parse(&url).unwrap();
+                        let uri = [url.path(), url.query().unwrap_or_default()].join("?");
+                        Box::new(github.get_pages(uri.as_ref()).map(move |(link, payload)| {
+                            let mut items = into_items(payload);
+                            items.reverse();
+                            (items.remove(0), (link, items))
+                        })) as Future<(I, (Option<Link>, Vec<I>))>
+                    }),
+                },
+            )
+        })
+        .into_stream()
+        .flatten()
+}
+
+pub fn to_json_str<T>( input: &T ) -> Result<String, Error>
+where T: serde::ser::Serialize + Sized {
+    serde_json::to_string(input).map_err(|err| Error::Deserialisation(err))
 }
 
 #[cfg(test)]
